@@ -1,15 +1,21 @@
 #include <iostream>
 using namespace std;
 
-int knapsack(int n, int w, int *wt, int *val) {
-    if (n == 0 || w == 0) {
-        return 0;   // base case
+int knapsack(int n, int W, int *wt, int *val){
+    int K[n+1][W+1]; // 2D array to store the result of subproblems
+
+    for(int i = 0; i <= n; i++){
+        for(int w = 0; w <= W; w++){
+            if(i == 0 || w == 0){
+                K[i][w] = 0; // base case
+            }else if(wt[i-1] <= w){
+                K[i][w] = max(K[i-1][w], K[i-1][w-wt[i-1]] + val[i-1]); // max of skip and include case
+            }else{
+                K[i][w] = K[i-1][w]; // skip case(when weight of item is greater than capacity of knapsack)
+            }
+        }
     }
-    if (wt[n - 1] > w) {
-        return knapsack(n - 1, w, wt, val); // skip case(when weight of item is greater than capacity of knapsack)
-    } else {
-        return max(knapsack(n - 1, w, wt, val), val[n - 1] + knapsack(n - 1, w - wt[n - 1], wt, val)); // max of skip and include case
-    }
+    return K[n][W];
 }
 
 int main() {
